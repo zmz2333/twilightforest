@@ -90,3 +90,13 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Build Artifacts to VSTS'
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
+
+- task: ado-discord-webhook@1
+  inputs:
+    channelId: '$(DiscordChannelID)'
+    webhookKey: '$(DiscordChannelSecret)'
+    messageType: 'embeds'
+    embeds: |
+      [{
+          "title": "Build Succeeded"
+      }]
