@@ -20,20 +20,6 @@ steps:
         }
     }
 
-- powershell: |
-    $var = (gci env:*).GetEnumerator() | Sort-Object Name
-    $out = ""
-    Foreach ($v in $var) {$out = $out + "`t{0,-28} = {1,-28}`n" -f $v.Name, $v.Value}
-
-    $fileName = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/variables.md"
-    write-output "dump variables on $fileName"
-
-    set-content $fileName $out
-
-    write-output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Environment Variables;]$fileName"
-  displayName: Dump Variables
-  condition: eq(variables['system.debug'], 'true')
-
 - task: Gradle@2
   inputs:
     workingDirectory: ''
@@ -90,6 +76,15 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Build Artifacts to VSTS'
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
+
+- powershell: |
+    $var = (gci env:*).GetEnumerator() | Sort-Object Name | ForEach-Object {
+      $nameAsCapitalSnakeCase = $_.Name
+      $nameAsDevOpsVariable = (Get-Culture).TextInfo.ToTitleCase(($nameAsCapitalSnakeCase -replace "_", " ")) -replace " ", ""
+      Write-Output "$(nameAsDevOpsVariable) = $($_.Value)"
+    }
+  displayName: Dump Variables
+  #condition: eq(variables['system.debug'], 'true')
 
 - task: ado-discord-webhook@1
   inputs:
