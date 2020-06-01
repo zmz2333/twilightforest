@@ -95,10 +95,11 @@ steps:
       }]
 
 - powershell: |
-    $var = (gci env:*).GetEnumerator() | Sort-Object Name | ForEach-Object {
+    (gci env:*).GetEnumerator() | Sort-Object Name | ForEach-Object {
       $nameAsCapitalSnakeCase = $_.Name
       $nameAsDevOpsVariable = (Get-Culture).TextInfo.ToTitleCase(($nameAsCapitalSnakeCase -replace "_", " ")) -replace " ", ""
       Write-Output "$nameAsDevOpsVariable = $($_.Value)"
     }
   displayName: Dump Variables
+  condition: always()
   #condition: eq(variables['system.debug'], 'true')
