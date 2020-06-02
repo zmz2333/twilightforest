@@ -92,7 +92,7 @@ steps:
     embeds: |
       [{
           "title": "Build Succeeded",
-          "description": "https://dev.azure.com/teamtwilight/Twilight%20Forest/_build/results?buildId=$(BUILD_BUILDID)&view=artifacts&type=publishedArtifacts",
+          "description": "https://dev.azure.com/teamtwilight/Twilight%20Forest/_build/results?buildId=$(Build.BuildId)&view=artifacts&type=publishedArtifacts",
           "color": "65280"
       }]
 
