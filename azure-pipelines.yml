@@ -91,7 +91,9 @@ steps:
     messageType: 'embeds'
     embeds: |
       [{
-          "title": "Build Succeeded"
+          "title": "Build Succeeded",
+          "description": "https://dev.azure.com/teamtwilight/Twilight%20Forest/_build/results?buildId=$(BUILD_BUILDID)&view=artifacts&type=publishedArtifacts",
+          "color": "65280"
       }]
 
 - powershell: |
