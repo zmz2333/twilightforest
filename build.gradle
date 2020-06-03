@@ -1,4 +1,3 @@
-F // Temp build fail test
 // define the properties file
 ext.configFile = file "gradle.properties"
 configFile.withReader {
