@@ -97,6 +97,19 @@ steps:
       }]
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
 
+- task: ado-discord-webhook@1
+  displayName: Announce Failed Build to discord
+  inputs:
+    channelId: '$(DiscordChannelID)'
+    webhookKey: '$(DiscordChannelSecret)'
+    messageType: 'embeds'
+    embeds: |
+      [{
+          "title": "Build Failed",
+          "color": "16711680"
+      }]
+  condition: and(failed(), eq(variables['CreateArtifacts'], 'True'))
+
 - powershell: |
     (gci env:*).GetEnumerator() | Sort-Object Name | ForEach-Object {
       $nameAsCapitalSnakeCase = $_.Name
