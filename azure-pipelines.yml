@@ -95,6 +95,7 @@ steps:
           "description": "https://dev.azure.com/teamtwilight/Twilight%20Forest/_build/results?buildId=$(Build.BuildId)&view=artifacts&type=publishedArtifacts",
           "color": "65280"
       }]
+  condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
 
 - powershell: |
     (gci env:*).GetEnumerator() | Sort-Object Name | ForEach-Object {
