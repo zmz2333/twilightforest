@@ -40,48 +40,16 @@ steps:
   inputs:
     sourceFolder: './build/libs/'
     contents: 'twilightforest-*-universal.jar'
-    targetFolder: $(build.artifactStagingDirectory)/release
-  condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
-
-- task: Gradle@2
-  displayName: Clean Build
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: false
-    tasks: 'clean'
-  condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
-
-- task: Gradle@2
-  displayName: Create Beta Build
-  inputs:
-    workingDirectory: ''
-    options: '-PCIRevision=$(javaprops_mod_version).$(revision)-beta -PCIType=BETA'
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: false
-    testResultsFiles: '**/TEST-*.xml'
-    tasks: 'build'
-  condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
-
-- task: CopyFiles@2
-  displayName: Copy Beta build to artifact staging
-  inputs:
-    sourceFolder: './build/libs/'
-    contents: 'twilightforest-*-beta-universal.jar'
-    targetFolder: $(build.artifactStagingDirectory)/beta
+    targetFolder: $(build.artifactStagingDirectory)
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Build Artifacts to Azure DevOps'
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'Release'
+    publishLocation: 'Container'
 
 - task: ado-discord-webhook@1
   displayName: Announce Build to discord
@@ -114,9 +82,7 @@ steps:
 - powershell: |
     (gci env:*).GetEnumerator() | Sort-Object Name | ForEach-Object {
       $nameAsCapitalSnakeCase = $_.Name
-      #$nameAsDevOpsVariable = (Get-Culture).TextInfo.ToTitleCase(($nameAsCapitalSnakeCase -replace "_", " ")) -replace " ", ""
       Write-Output "$nameAsCapitalSnakeCase = $($_.Value)"
     }
   displayName: Dump Variables
-  condition: always()
-  #condition: eq(variables['system.debug'], 'true')
+  condition: eq(variables['system.debug'], 'true')
