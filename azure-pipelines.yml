@@ -92,7 +92,7 @@ steps:
     embeds: |
       [{
           "title": "Build Succeeded",
-          "description": "https://dev.azure.com/teamtwilight/Twilight%20Forest/_build/results?buildId=$(Build.BuildId)&view=artifacts&type=publishedArtifacts",
+          "description": "Results: $(System.TeamFoundationServerUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=results\nCommit: $(Build.Repository.Uri)/commit/$(Build.SourceVersion)\nAuthor: $(Build.SourceVersionAuthor)\n\nDirect Download: $(System.TeamFoundationServerUri)$(System.TeamProjectId)/_apis/build/builds/$(Build.BuildId)/artifacts?artifactName=drop&api-version=5.1&%24format=zip",
           "color": "65280"
       }]
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
@@ -106,6 +106,7 @@ steps:
     embeds: |
       [{
           "title": "Build Failed",
+          "description": "Results: $(System.TeamFoundationServerUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=results\nCommit: $(Build.Repository.Uri)/commit/$(Build.SourceVersion)\nAuthor: $(Build.SourceVersionAuthor)",
           "color": "16711680"
       }]
   condition: and(failed(), eq(variables['CreateArtifacts'], 'True'))
