@@ -56,9 +56,21 @@ steps:
     $response
     $Container = $response.resource.data.TrimStart("#/")
     $Container
-    $downloadUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/resources/$($Container)?itemPath=Release%2Ftwilightforest-$($env:JAVAPROPS_MINECRAFT_VERSION)-$($env:JAVAPROPS_MOD_VERSION).$($revision)-universal.jar
+    $downloadUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/resources/$($Container)?itemPath=Release%2Ftwilightforest-$($env:JAVAPROPS_MINECRAFT_VERSION)-$($env:JAVAPROPS_MOD_VERSION).$($revision)-universal.jar"
     $downloadUrl
+    $jobResult = (${env:agent.jobstatus}).ToTitleCase()
+    Write-Host "DiscordJarDownloadUrl=$downloadUrl"
     Write-Host "##vso[task.setvariable variable=DiscordJarDownloadUrl]$downloadUrl"
+    Write-Host "DiscordJobResult=$jobResult"
+    Write-Host "##vso[task.setvariable variable=DiscordJobResult]$jobResult"
+    if ($jobResult -eq "Succeeded") {
+      Write-Host "DiscordMessageColour=65280"
+      Write-Host "##vso[task.setvariable variable=DiscordMessageColour]65280"
+    } else {
+      Write-Host "DiscordMessageColour=16711680"
+      Write-Host "##vso[task.setvariable variable=DiscordMessageColour]16711680"
+    }
+   
   env:
     SYSTEM_ACCESSTOKEN: $(system.accesstoken)
 
@@ -96,4 +108,4 @@ steps:
       Write-Output "$nameAsCapitalSnakeCase = $($_.Value)"
     }
   displayName: Dump Variables
-  condition: eq(variables['system.debug'], 'true')
+  #condition: eq(variables['system.debug'], 'true')
