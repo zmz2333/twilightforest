@@ -114,11 +114,7 @@ steps:
     webhookKey: '$(DiscordChannelSecret)'
     messageType: 'embeds'
     embeds: |
-      [{
-          "title": "Build Succeeded",
-          "description": "**Results:**\n$(System.TeamFoundationServerUri)Twilight%20Forest/_build/results?buildId=$(Build.BuildId)&view=results\n**Commit:**\n$(Build.Repository.Uri)/commit/$(Build.SourceVersion)\n**Author:**\n$(Build.SourceVersionAuthor)\n\n**Direct Download:**\n$(DiscordJarDownloadUrl)",
-          "color": "65280"
-      }]
+      [$(DiscordMessage)]
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
 
 - task: ado-discord-webhook@1
