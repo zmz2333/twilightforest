@@ -14,7 +14,7 @@ variables:
 steps:
 - task: Cache@2
   inputs:
-    key: 'build.gradle | gradle.properties | "$(Agent.OS)"'
+    key: 'gradle | "$(Agent.OS)" | build.gradle | gradle.properties | src/main/resources/META-INF/accesstransformer.cfg'
     restoreKeys: gradle
     path: $(GRADLE_USER_HOME)
   displayName: Gradle build cache
@@ -86,24 +86,26 @@ steps:
 
     $json = [Ordered]@{
         title= "Build $jobResult"
-        url="$($Env:System_TeamFoundationServerUri)Twilight%20Forest/_build/results?buildId=$($Env:Build_BuildId)&view=results"
+        url="$($env:SYSTEM_TEAMFOUNDATIONSERVERURI)Twilight%20Forest/_build/results?buildId=$($Env:BUILD_BUILDID)&view=results"
         color= $Colour
         fields=(
             [Ordered]@{
                 name="Author"
-                value="$($Env:Build_SourceVersionAuthor)"
+                value="$($env:BUILD_SOURCEVERSIONAUTHOR)"
             },
             [Ordered]@{
                 name="Commit"
-                value="$($Env:Build_Repository_Uri)/commit/$($env:Build_SourceVersion)"
+                value="$($env:BUILD_REPOSITORY_URI)/commit/$($env:BUILD_SOURCEVERSION)"
             },
             [Ordered]@{
                 name="Direct Download"
-                value="$($Env:SourceVersionAuthor)"
+                value="$downloadUrl"
             }
         )
     }
     $json | ConvertTo-Json -Compress
+    Write-Host "##vso[task.setvariable variable=DiscordMessage]$($json | ConvertTo-Json -Compress)"
+  displayName: Format discord message
 
 - task: ado-discord-webhook@1
   displayName: Announce Build to discord
