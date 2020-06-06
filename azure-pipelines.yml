@@ -51,6 +51,17 @@ steps:
     ArtifactName: 'Release'
     publishLocation: 'Container'
 
+- powershell: |
+    $response = Invoke-RestMethod -Uri "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/builds/$($env:BUILD_BUILDID)/artifacts?artifactName=Release&api-version=4.1"
+    $response
+    $Container = $response.resource.data.TrimStart("#/")
+    $Container
+    $downloadUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/resources/$($Container)?itemPath=Release%2Ftwilightforest-$($env:JAVAPROPS_MINECRAFT_VERSION)-$($env:JAVAPROPS_MOD_VERSION).$($revision)-universal.jar
+    $downloadUrl
+    Write-Host "##vso[task.setvariable variable=DiscordJarDownloadUrl]$downloadUrl"
+  env:
+    SYSTEM_ACCESSTOKEN: $(system.accesstoken)
+
 - task: ado-discord-webhook@1
   displayName: Announce Build to discord
   inputs:
@@ -60,7 +71,7 @@ steps:
     embeds: |
       [{
           "title": "Build Succeeded",
-          "description": "**Results:**\n$(System.TeamFoundationServerUri)Twilight%20Forest/_build/results?buildId=$(Build.BuildId)&view=results\n**Commit:**\n$(Build.Repository.Uri)/commit/$(Build.SourceVersion)\n**Author:**\n$(Build.SourceVersionAuthor)\n\n**Direct Download:**\n$(System.TeamFoundationServerUri)$(System.TeamProjectId)/_apis/build/builds/$(Build.BuildId)/artifacts?artifactName=drop&api-version=5.1&%24format=zip",
+          "description": "**Results:**\n$(System.TeamFoundationServerUri)Twilight%20Forest/_build/results?buildId=$(Build.BuildId)&view=results\n**Commit:**\n$(Build.Repository.Uri)/commit/$(Build.SourceVersion)\n**Author:**\n$(Build.SourceVersionAuthor)\n\n**Direct Download:**\n$(DiscordJarDownloadUrl)",
           "color": "65280"
       }]
   condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
