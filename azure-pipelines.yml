@@ -57,7 +57,7 @@ steps:
     $response
     $Container = $response.resource.data.TrimStart("#/")
     $Container
-    $downloadUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)/_apis/resources/$($Container)?itemPath=$($Env:ARTIFACTNAME)%2Ftwilightforest-$($env:JAVAPROPS_MINECRAFT_VERSION)-$($env:JAVAPROPS_MOD_VERSION).$($revision)-universal.jar"
+    $downloadUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)_apis/resources/Containers/$($Container)?itemPath=$($Env:ARTIFACTNAME)%2Ftwilightforest-$($env:JAVAPROPS_MINECRAFT_VERSION)-$($env:JAVAPROPS_MOD_VERSION).$($env:REVISION)-universal.jar"
     $downloadUrl
     $jobResult = (Get-Culture).TextInfo.ToTitleCase(${env:agent.jobstatus})
     Write-Host "DiscordJarDownloadUrl=$downloadUrl"
