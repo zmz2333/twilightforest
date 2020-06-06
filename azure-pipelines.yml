@@ -70,7 +70,7 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)'
     artifact: '$(artifactName)2'
     publishLocation: 'pipeline'
-    
+
 - powershell: |
     $response = Invoke-RestMethod -Uri "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/builds/$($env:BUILD_BUILDID)/artifacts?artifactName=Release&api-version=4.1"
     $Container = $response.resource.data.TrimStart("#/")
@@ -110,6 +110,9 @@ steps:
         )
     }
     Write-Host "##vso[task.setvariable variable=DiscordMessage]$($json | ConvertTo-Json -Compress)"
+
+    $response = Invoke-RestMethod -Uri "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/pipelines/$($env:SYSTEM_DEFINITIONID)/runs/$($env:BUILD_BUILDID)/artifacts?artifactName=$($Env:releaseName)2&api-version=6.0-preview.1"
+    $response | ConvertTo-Json -Compress
   displayName: Format discord message
   condition: always()
 - task: ado-discord-webhook@1
