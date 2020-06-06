@@ -111,10 +111,15 @@ steps:
     }
     Write-Host "##vso[task.setvariable variable=DiscordMessage]$($json | ConvertTo-Json -Compress)"
 
-    $response = Invoke-RestMethod -Uri "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/pipelines/$($env:SYSTEM_DEFINITIONID)/runs/$($env:BUILD_BUILDID)/artifacts?artifactName=$($Env:releaseName)2&api-version=6.0-preview.1"
+    $uri = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/pipelines/$($env:SYSTEM_DEFINITIONID)/runs/$($env:BUILD_BUILDID)/artifacts?artifactName=$($Env:releaseName)2&api-version=6.0-preview.1"
+    $headers = @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" }
+    $response = Invoke-RestMethod -Uri $uri -Headers $headers
     $response | ConvertTo-Json -Compress
   displayName: Format discord message
   condition: always()
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
 - task: ado-discord-webhook@1
   displayName: Announce Build to discord
   inputs:
