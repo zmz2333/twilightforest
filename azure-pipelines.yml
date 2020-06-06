@@ -87,7 +87,7 @@ steps:
     $json = [Ordered]@{
         title= "Build $jobResult"
         url="$($Env:System_TeamFoundationServerUri)Twilight%20Forest/_build/results?buildId=$($Env:Build_BuildId)&view=results"
-        color: $Colour
+        color= $Colour
         fields=(
             [Ordered]@{
                 name="Author"
