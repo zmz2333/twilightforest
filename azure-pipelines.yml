@@ -58,7 +58,7 @@ steps:
     $Container
     $downloadUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/resources/$($Container)?itemPath=Release%2Ftwilightforest-$($env:JAVAPROPS_MINECRAFT_VERSION)-$($env:JAVAPROPS_MOD_VERSION).$($revision)-universal.jar"
     $downloadUrl
-    $jobResult = (${env:agent.jobstatus}).ToTitleCase()
+    $jobResult = (Get-Culture).TextInfo.ToTitleCase(${env:agent.jobstatus})
     Write-Host "DiscordJarDownloadUrl=$downloadUrl"
     Write-Host "##vso[task.setvariable variable=DiscordJarDownloadUrl]$downloadUrl"
     Write-Host "DiscordJobResult=$jobResult"
